@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demoInertia.dto.OrganizationsWithImages;
 // import com.example.demoInertia.dto.OrganizationParams;
 import com.example.demoInertia.model.Organization;
 import com.example.demoInertia.service.OrganizationService;
@@ -22,15 +23,20 @@ public class OrganizationController {
     private OrganizationService organizationService;
 
     @GetMapping("/getAllOrganizations")
-    public List<Organization> getAllOrganizations(){
+    public List<OrganizationsWithImages> getAllOrganizations(){
         return organizationService.getAllOrganization();
     }
+
     // @GetMapping("/getFilterdOrganizationList")
     // public List<Organization> getFilteredOrganizationList(@RequestParam OrganizationParams params){
     //     return organizationService.getFilteredOrganizations(params);
     // }
+
+
     @GetMapping("/organizations")
     public List<Organization> getOrganizations(@RequestParam(required = false) Map<String, String> filters){
         return organizationService.organizations(filters);
+
+
     }
 }

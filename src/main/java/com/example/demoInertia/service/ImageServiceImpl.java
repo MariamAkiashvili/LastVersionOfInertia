@@ -18,13 +18,13 @@ import com.example.demoInertia.model.Images;
 import com.example.demoInertia.model.Organization;
 import com.example.demoInertia.repository.OrganizationRepository;
 // import com.example.demoInertia.dto.APIResponse;
-import com.example.demoInertia.repository.UploadImageRepository;
+import com.example.demoInertia.repository.ImagesRepository;
 
 @Service
 public class ImageServiceImpl implements ImageService{
 
     @Autowired
-    private UploadImageRepository uploadImageRepository;
+    private ImagesRepository uploadImageRepository;
 
     @Autowired
     private OrganizationRepository org;

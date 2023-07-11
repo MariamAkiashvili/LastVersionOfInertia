@@ -1,14 +1,25 @@
 package com.example.demoInertia.service;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
+import com.example.demoInertia.dto.OrganizationsWithImages;
+import com.example.demoInertia.model.Images;
 import com.example.demoInertia.model.Organization;
+import com.example.demoInertia.repository.ImagesRepository;
 import com.example.demoInertia.repository.OrganizationRepository;
 
 
@@ -19,10 +30,40 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Autowired
     private OrganizationRepository organizationRepository;
 
+    @Autowired
+    private ImagesRepository imagesRepository;
 
     @Override
-    public List<Organization> getAllOrganization() {
-       return organizationRepository.findByIsActive(true);
+    public List<OrganizationsWithImages> getAllOrganization() {
+
+        List<OrganizationsWithImages> orgs = new ArrayList<>();
+
+        for (Organization organization : organizationRepository.findByIsActive(true)) {
+
+            OrganizationsWithImages organizationWithImages = new OrganizationsWithImages(organization);
+            List <Images> images = imagesRepository.findAllByOrganization(organization);
+
+            for (Images image : images) {
+
+                try {
+                    Path imagePath = Paths.get(image.getAddress());
+                    Resource resource = new UrlResource(imagePath.toUri());
+
+                    if (resource.exists()) {
+                        byte[] imageData = FileCopyUtils.copyToByteArray(resource.getInputStream());
+                        String base64Image = Base64.getEncoder().encodeToString(imageData);
+                        organizationWithImages.AddImages(base64Image);
+                    }
+
+                } 
+                catch (IOException e) {
+                // Handle exception if unable to read image file
+                }
+            }
+            orgs.add(organizationWithImages);
+            
+        }
+       return orgs;
     }
 
 
